@@ -21,6 +21,8 @@ export const issueVC = async (req: Request, res: Response) => {
         saltGenerator: generateSalt,
     });
 
+    /**************************************************************************/
+    /* you can customize claims and disclosure frame as per your requirements */
     const claims = {
         id: 'did:example:ebfeb1f712ebc6f1c276e12ec21',
         name: 'John Doe',
@@ -39,6 +41,7 @@ export const issueVC = async (req: Request, res: Response) => {
             _sd_decoy: 2,
         },
     };
+    /**************************************************************************/
 
     const credential = await sdjwt.issue(
         {
