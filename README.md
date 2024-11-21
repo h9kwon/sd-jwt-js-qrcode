@@ -10,8 +10,39 @@ A toolkit for simulating **Selective Disclosure JSON Web Tokens (SD-JWT)** workf
 - **Express Backend**: Simulates issuer, holder, and verifier endpoints.
 - **React Frontend**: Interactive UI for holder functionalities and QR code handling.
 
+
 ## Basic Workflow
 
 1. **Issuer**: Issues an SD-JWT containing claims, disclosures, and selective disclosure settings.
 2. **Holder**: Receives and manages the SD-JWT. Selects claims for selective disclosure and generates a verifiable presentation (VP).
 3. **Verifier**: Decodes and verifies the VP to validate the disclosed claims.
+
+## Etc.
+
+- Scanning the QR code can be simulated by clicking on it.
+
+<br>
+
+# Development
+
+## Build
+
+```
+cd frontend
+npm install
+cd ../backend
+npm install
+```
+
+## Run simulation
+### In backend directory,
+```
+tsc
+npm start
+```
+### In frontend directory,
+```
+tsc
+npm run build
+npm start
+```
