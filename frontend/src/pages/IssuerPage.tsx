@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { QRCodeCanvas } from 'qrcode.react';
 import { useNavigate } from 'react-router-dom';
+import QRGenerator from '../components/QRGenerator';
 
 const IssuerPage: React.FC = () => {
     const [vc, setVc] = useState<string>('');
-    const navigate = useNavigate(); // Hook to navigate programmatically
+    const navigate = useNavigate();
 
     const issueVC = async () => {
         console.log('Issuing VC');
@@ -21,7 +21,6 @@ const IssuerPage: React.FC = () => {
     // Function to handle the QR code click (simulating scan)
     const handleQrClick = () => {
         if (vc) {
-            // Redirect to the holder page with VC data as a query parameter
             navigate(`/holder?vc=${vc}`);
         }
     };
@@ -34,7 +33,7 @@ const IssuerPage: React.FC = () => {
                 <div>
                     <h3>Scan this QR code with the Holder</h3>
                     <a onClick={handleQrClick}>
-                        <QRCodeCanvas value={vc} size={256} />
+                        {QRGenerator({ value: vc })}
                     </a>
                 </div>
             )}

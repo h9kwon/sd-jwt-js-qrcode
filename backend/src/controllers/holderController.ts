@@ -43,7 +43,7 @@ export const decodeVC = async (req: Request, res: Response) => {
             digest,
         );
 
-        console.log('The claims are:'); // the full vc
+        console.log('The claims are:');
         console.log(JSON.stringify(claims, null, 2));
 
         res.status(200).json(decodedSdJwt);
@@ -56,26 +56,27 @@ export const decodeVC = async (req: Request, res: Response) => {
 export const createVP = async (req: Request, res: Response) => {
     try {
         await initializeKeys();
-    
+
         console.log("Creating VP...");
 
         const credential = req.body.vc;
         const presentationFrame = req.body.presentationFrame;
-    
+
         const presentation = await sdjwtVcInstance.present(credential, presentationFrame);
-    
+
         console.log("presentation in makevp", presentation);
-    
+
+        // sign the presentation using the holder's private key
         const holderSignature = await signer(presentation);
-    
+
+        // double-check the holder's signature
         const verifyResult = await verifier(presentation, holderSignature);
-    
         console.log("holder's signature", holderSignature);
         console.log("verify result: ", verifyResult);
 
-        const vp = {sdjwt: presentation, holderSignature: holderSignature};
-        
+        const vp = { sdjwt: presentation, holderSignature: holderSignature, holderPublicKey: publicKey };
         console.log('VP:', vp);
+
         res.status(200).json(vp);
     } catch (error) {
         console.error('Error creating VP:', error);

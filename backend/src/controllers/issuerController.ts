@@ -17,15 +17,16 @@ const claims = {
     degree: {
         type: 'BachelorDegree',
         name: 'Bachelor of Science and Arts',
+        major: 'Computer Science',
         college: 'Example University',
         gpa: '4.0'
     }
 };
 
 const disclosureFrame: DisclosureFrame<typeof claims> = {
-    _sd: ['id'],
+    _sd: ['name'],
     degree: {
-        _sd: ['gpa'],
+        _sd: ['college', 'gpa'],
         _sd_decoy: 2,
     },
 };
@@ -50,14 +51,13 @@ const initializeKeys = async () => {
 };
 
 export const issueVC = async (req: Request, res: Response) => {
-    // Logic for generating a Verifiable Credential
     console.log("Generating VC...");
 
     await initializeKeys();
 
     const credential = await sdjwtVcInstance.issue(
         {
-            iss: 'Issuer',
+            iss: publicKey,
             iat: new Date().getTime(),
             vct: 'ExampleCredentials',
             ...claims,

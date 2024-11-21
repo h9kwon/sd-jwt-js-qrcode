@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import issuerRoutes from './routes/issuerRoutes';
-// import verifierRoutes from './routes/verifierRoutes';
+import verifierRoutes from './routes/verifierRoutes';
 import holderRoutes from './routes/holderRoutes';
 
 const app = express();
@@ -19,6 +19,6 @@ app.use(express.json());
 // Routes
 app.use('/issuer', issuerRoutes);
 app.use('/holder', holderRoutes);
-// app.use('/verifier', verifierRoutes);
+app.use('/verifier', verifierRoutes);
 
 export default app;

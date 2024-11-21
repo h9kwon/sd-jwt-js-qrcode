@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { QRCodeCanvas } from 'qrcode.react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import QRGenerator from '../components/QRGenerator';
 
-const HolderPage = () => {
-    const [vc, setVc] = useState<string>('');
+const HolderPage: React.FC = () => {
+    const [vc, setVc] = useState<string | null>(null);
     const [decodedVC, setDecodedVC] = useState<string | null>(null);
     const [decodedVCJson, setDecodedVCJson] = useState<any | null>(null);
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([]); // Keys selected by the user
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+    const [vp, setVp] = useState<string | null>(null);
 
-
-    const location = useLocation(); // Access the current location (URL)
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         // Extract the query parameters from the URL
         const queryParams = new URLSearchParams(location.search);
-        const vc = queryParams.get('vc'); // Get the 'vc' parameter from the query string
+        const vc = queryParams.get('vc');
         if (vc) {
-            setVc(vc); // Set the VC data if it's present in the URL
+            setVc(vc);
         }
     }, [location]); // Re-run effect when the location changes
 
@@ -25,13 +26,13 @@ const HolderPage = () => {
             const response = await fetch('http://localhost:3001/holder/decode-vc', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ vc }) // Send the VC to the backend for decoding
+                body: JSON.stringify({ vc })
             });
             if (response.status == 200) {
                 console.log("response 200");
                 const data = await response.json();
-                setDecodedVCJson(data); // Set the decoded VC JSON object
-                setDecodedVC(JSON.stringify(data, null, 2)); // Pretty-print the decoded VC
+                setDecodedVCJson(data);
+                setDecodedVC(JSON.stringify(data, null, 2));
             } else {
                 console.error('Failed to decode VC:', response.statusText);
                 setDecodedVC('Failed to decode VC.');
@@ -39,6 +40,13 @@ const HolderPage = () => {
         } catch (error) {
             console.error('Error decoding VC:', error);
             setDecodedVC('Error decoding VC.');
+        }
+    };
+
+    // Function to handle the QR code click (simulating scan)
+    const handleQrClick = () => {
+        if (vp) {
+            navigate(`/verifier?vp=${vp}`);
         }
     };
 
@@ -56,11 +64,14 @@ const HolderPage = () => {
             const response = await fetch('http://localhost:3001/holder/create-vp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ vc, presentationFrame }) // Send the selected keys and VC
+                body: JSON.stringify({ vc, presentationFrame })
             });
+
             if (response.status === 200) {
                 const data = await response.json();
                 console.log('VP created successfully:', data);
+
+                setVp(JSON.stringify(data, null, 2));
                 alert('VP created successfully!');
             } else {
                 console.error('Failed to create VP:', response.statusText);
@@ -82,7 +93,7 @@ const HolderPage = () => {
                     alignItems: 'center',
                     gap: '20px'
                 }}>
-                    <div style={{ 
+                    <div style={{
                         width: '750px',
                         margin: '30px',
                         whiteSpace: 'break-all',
@@ -107,12 +118,11 @@ const HolderPage = () => {
                         margin: '30px',
                         display: 'flex',
                         justifyContent: 'center',
-                        gap: '20px', // Adds space between the boxes
-                        alignItems: 'flex-start' // Aligns items at the top
+                        gap: '20px',
+                        alignItems: 'flex-start'
                     }}>
                         {/* Decoded VC Box */}
                         <div style={{
-                            minWidth: '400px',
                             maxWidth: 'fit-content',
                             whiteSpace: 'pre-wrap',
                             overflowWrap: 'anywhere',
@@ -127,7 +137,6 @@ const HolderPage = () => {
 
                         {/* Checkbox Selection */}
                         <div style={{
-                            minWidth: '120px',
                             maxWidth: 'fit-content',
                             border: '1px solid #ccc',
                             padding: '10px',
@@ -149,6 +158,14 @@ const HolderPage = () => {
                                 </div>
                             ))}
                             <button onClick={createVP}>Create VP</button>
+                            {vp && (
+                                <div>
+                                    <h3>Show this QR code to the Verifier</h3>
+                                    <a onClick={handleQrClick}>
+                                        {QRGenerator({ value: vp })}
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
