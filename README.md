@@ -1,6 +1,6 @@
 # sd-jwt-js-qrcode
 
-A toolkit for simulating **Selective Disclosure JSON Web Tokens (SD-JWT)** workflows using QR codes. This repository demonstrates the interactions between **issuer**, **holder**, and **verifier** roles in a decentralized identifier (DID) ecosystem. The toolkit enables encoding, selective disclosure, and verification of verifiable credentials (VC) and presentations (VP) through QR code interactions.
+A toolkit for simulating **Selective Disclosure JSON Web Tokens (SD-JWT)** workflows using QR codes. This repository demonstrates the interactions between **issuer**, **holder**, and **verifier** roles in a decentralized identifier (DID) ecosystem. The toolkit enables encoding, selective disclosure, issuance and verification of verifiable credentials (VC) and presentations (VP) through QR code interactions.
 
 ## Features
 
