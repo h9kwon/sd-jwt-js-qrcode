@@ -50,10 +50,13 @@ const HolderPage = () => {
 
     const createVP = async () => {
         try {
+            const presentationFrame = {} as Record<string, boolean>;
+            selectedKeys.forEach(key => presentationFrame[key] = true);
+
             const response = await fetch('http://localhost:3001/holder/create-vp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ vc, selectedKeys }) // Send the selected keys and VC
+                body: JSON.stringify({ vc, presentationFrame }) // Send the selected keys and VC
             });
             if (response.status === 200) {
                 const data = await response.json();
@@ -73,9 +76,14 @@ const HolderPage = () => {
         <div>
             <h2>Holder Page</h2>
             {vc ? (
-                <div>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '20px'
+                }}>
                     <div style={{ 
-                        width: '900px',
+                        width: '750px',
                         margin: '30px',
                         whiteSpace: 'break-all',
                         overflowWrap: 'anywhere',
@@ -98,12 +106,14 @@ const HolderPage = () => {
                     <div style={{
                         margin: '30px',
                         display: 'flex',
+                        justifyContent: 'center',
                         gap: '20px', // Adds space between the boxes
                         alignItems: 'flex-start' // Aligns items at the top
                     }}>
                         {/* Decoded VC Box */}
                         <div style={{
-                            maxWidth: '600px',
+                            minWidth: '400px',
+                            maxWidth: 'fit-content',
                             whiteSpace: 'pre-wrap',
                             overflowWrap: 'anywhere',
                             wordBreak: 'break-word',
@@ -117,7 +127,8 @@ const HolderPage = () => {
 
                         {/* Checkbox Selection */}
                         <div style={{
-                            maxWidth: '300px',
+                            minWidth: '120px',
+                            maxWidth: 'fit-content',
                             border: '1px solid #ccc',
                             padding: '10px',
                             backgroundColor: '#f9f9f9',

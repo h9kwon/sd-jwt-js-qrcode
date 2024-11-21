@@ -3,47 +3,59 @@ import { Request, Response } from 'express';
 import { digest, ES256, generateSalt } from '@sd-jwt/crypto-nodejs';
 import type { DisclosureFrame } from '@sd-jwt/types';
 
+let privateKey: any;
+let publicKey: any;
+let signer: any;
+let verifier: any;
+let sdjwtVcInstance: any;
+
+/**************************************************************************/
+/* you can customize claims and disclosure frame as per your requirements */
+const claims = {
+    id: 'did:example:abcdef123456',
+    name: 'John Doe',
+    degree: {
+        type: 'BachelorDegree',
+        name: 'Bachelor of Science and Arts',
+        college: 'Example University',
+        gpa: '4.0'
+    }
+};
+
+const disclosureFrame: DisclosureFrame<typeof claims> = {
+    _sd: ['id'],
+    degree: {
+        _sd: ['gpa'],
+        _sd_decoy: 2,
+    },
+};
+/**************************************************************************/
+
+const initializeKeys = async () => {
+    if (!sdjwtVcInstance) {
+        const keyPair = await ES256.generateKeyPair();
+        privateKey = keyPair.privateKey;
+        publicKey = keyPair.publicKey;
+        signer = await ES256.getSigner(privateKey);
+        verifier = await ES256.getVerifier(publicKey);
+        sdjwtVcInstance = new SDJwtVcInstance({
+            signer,
+            verifier,
+            signAlg: ES256.alg,
+            hasher: digest,
+            hashAlg: 'SHA-256',
+            saltGenerator: generateSalt,
+        });
+    }
+};
+
 export const issueVC = async (req: Request, res: Response) => {
     // Logic for generating a Verifiable Credential
     console.log("Generating VC...");
 
+    await initializeKeys();
 
-    const { privateKey, publicKey } = await ES256.generateKeyPair();
-    const signer = await ES256.getSigner(privateKey);
-    const verifier = await ES256.getVerifier(publicKey);
-
-    const sdjwt = new SDJwtVcInstance({
-        signer,
-        verifier,
-        signAlg: ES256.alg,
-        hasher: digest,
-        hashAlg: 'SHA-256',
-        saltGenerator: generateSalt,
-    });
-
-    /**************************************************************************/
-    /* you can customize claims and disclosure frame as per your requirements */
-    const claims = {
-        id: 'did:example:ebfeb1f712ebc6f1c276e12ec21',
-        name: 'John Doe',
-        degree: {
-            type: 'BachelorDegree',
-            name: 'Bachelor of Science and Arts',
-            college: 'Example University',
-            gpa: '4.0'
-        }
-    };
-
-    const disclosureFrame: DisclosureFrame<typeof claims> = {
-        _sd: ['id'],
-        degree: {
-            _sd: ['gpa'],
-            _sd_decoy: 2,
-        },
-    };
-    /**************************************************************************/
-
-    const credential = await sdjwt.issue(
+    const credential = await sdjwtVcInstance.issue(
         {
             iss: 'Issuer',
             iat: new Date().getTime(),
