@@ -46,3 +46,12 @@ tsc
 npm run build
 npm start
 ```
+
+<br>
+
+# Further Plan
+
+## Connection to Wallet
+
+- receiving VC using Wallet by scanning QR code.
+- generating the QR code of VP in the Wallet and show it to verifier offline.
