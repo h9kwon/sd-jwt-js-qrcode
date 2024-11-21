@@ -1,26 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import IssuerPage from './pages/IssuerPage';
+import HolderPage from './pages/HolderPage';
+// import VerifierPage from './VerifierPage';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/issuer" element={<IssuerPage />} />
+                <Route path="/holder" element={<HolderPage />} />
+                {/* <Route path="/verifier" element={<VerifierPage />} /> */}
+            </Routes>
+        </Router>
+    );
+};
 
 export default App;
